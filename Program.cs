@@ -1,10 +1,5 @@
 var builder = WebApplication.CreateBuilder(args);
 
-builder.WebHost.ConfigureKestrel(serverOptions =>
-{
-    serverOptions.Listen(System.Net.IPAddress.Parse("192.168.100.63"), 5098);  // Pode mudar a porta se necessário
-});
-
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
@@ -27,8 +22,13 @@ app.MapStaticAssets();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}")
+    pattern: "{controller=Principal}/{action=Index}")
     .WithStaticAssets();
+
+app.MapControllerRoute(
+    name: "Pagina2",
+    pattern: "/teste/pagina2",
+    defaults: new { controller = "Pagina2", action = "Pagina2" });
 
 
 app.Run();

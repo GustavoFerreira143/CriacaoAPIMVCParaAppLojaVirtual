@@ -4,21 +4,9 @@ using ProjetoApiMVC.Models;
 
 namespace ProjetoApiMVC.Controllers;
 
-public class HomeController : Controller
+public class Pagina2Controller : Controller
 {
-    private readonly ILogger<HomeController> _logger;
-
-    public HomeController(ILogger<HomeController> logger)
-    {
-        _logger = logger;
-    }
-
-    public IActionResult Index()
-    {
-        return View();
-    }
-
-    public IActionResult Privacy()
+        public IActionResult Pagina2()
     {
         return View();
     }
