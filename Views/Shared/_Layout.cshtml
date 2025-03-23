@@ -1,21 +1,130 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="utf-8">
     <title>@ViewData["Title"] Requisições RentShopVT</title>
     <link rel="stylesheet" href="~/css/site.css" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 </head>
+
 <body>
     <!-- Navbar -->
     @Html.Partial("_Navbar")
 
     <div class="container-fluid">
-        @RenderBody()  <!-- Aqui será inserido o conteúdo da página -->
+        @RenderBody() <!-- Aqui será inserido o conteúdo da página -->
     </div>
 
     <!-- Footer -->
     @Html.Partial("_Footer")
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+async function buscarUsuariosPost() {
+    try {
+        // 1. Verifica se o campo InputComandos tem algum valor, senão usa a URL padrão
+        let Url = document.getElementById('InputComandos').value.trim() ? document.getElementById('InputComandos').value : "/api/reqPost";
+        
+        // 2. Verifica se o InputComandosPost tem um valor, caso contrário usa "Nome=value"
+        let Item = document.getElementById('InputComandosPost').value.trim() ? document.getElementById('InputComandosPost').value : "Nome=value";
+        
+        // 3. Divide o conteúdo baseado em espaços e processa os pares chave=valor
+        let requestBody = {};
+        let pares = Item.split(' '); // Divide por espaços
+        
+        for (let par of pares) {
+            let Valores = par.split('=');
+            if (Valores.length === 2) {
+                // Adiciona ao objeto de requisição, garantindo que os valores sejam tratados corretamente
+                requestBody[Valores[0].trim()] = Valores[1].trim();
+            }
+        }
+
+        // 4. Verifica se ao menos um par chave=valor foi encontrado
+        if (Object.keys(requestBody).length === 0) {
+            document.getElementById("RetornoApi").innerText = "Erro: Nenhum dado válido no formato 'chave=valor' foi encontrado!";
+            return;
+        }
+        // 5. Envia a requisição usando fetch
+        const response = await fetch(Url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(requestBody) // Passando o objeto formatado
+        });
+
+        let resposta = await response.json(); 
+
+        if (!response.ok) {
+            console.log(resposta);
+            document.getElementById("RetornoApi").innerText = `${resposta.message} ${resposta.details}`;
+        }
+        else
+        {
+            document.getElementById("RetornoApi").innerText = JSON.stringify(resposta, null, 2);
+        }
+
+
+    } catch (error) {
+        document.getElementById("RetornoApi").innerText = `Erro inesperado: ${error.message}`;
+    }
+}
+
+async function buscarUsuariosGet() {
+    try {
+        // Obtém o valor da URL, se InputComandos não estiver preenchido, usa o valor padrão "/api/reqGet"
+        let Url = document.getElementById('InputComandos').value.trim() ? document.getElementById('InputComandos').value : "/api/reqGet";
+        let Item = document.getElementById('InputComandosGet').value.trim();  // Obtém o valor dos parâmetros de consulta
+
+        // Se houver valores em InputComandosGet, adicione-os à URL
+        if (Item) {
+            // Verifica se os parâmetros estão no formato "valor=valor" e cria a query string
+            let parametros = Item.split(' ').map(param => {
+                let valores = param.split('=');
+                if (valores.length === 2) {
+                    return `${encodeURIComponent(valores[0].trim())}=${encodeURIComponent(valores[1].trim())}`;
+                }
+                return '';
+            }).filter(param => param !== '').join('&');
+            
+            if (parametros) {
+                // Adiciona a query string à URL
+                Url = `${Url}?${parametros}`;
+            }
+        }
+
+        // Faz a requisição GET
+        await fetch(Url, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" }
+        })
+        .then(response => {
+            // Verifica se a resposta foi bem-sucedida (código 200)
+            if (!response.ok) {
+                throw new Error(`Erro: ${response.status} ${response.statusText}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Exibe a resposta no elemento "RetornoApi"
+            document.getElementById("RetornoApi").innerText = JSON.stringify(data, null, 2);
+        })
+        .catch(error => {
+            // Tratamento de erros de rede ou resposta
+            if (error.response) {
+                document.getElementById("RetornoApi").innerText = `Erro no servidor: ${error.response.message || 'Erro desconhecido'}`;
+            } else if (error.message === 'Failed to fetch') {
+                document.getElementById("RetornoApi").innerText = 'Erro de rede: Não foi possível se conectar ao servidor. Tente novamente mais tarde.';
+            } else {
+                document.getElementById("RetornoApi").innerText = `Erro desconhecido: ${error.message}`;
+            }
+        });
+    } catch (error) {
+        // Erro geral
+        document.getElementById("RetornoApi").innerText = `Erro: ${error.message}`;
+    }
+}
+</script>
+
 </body>
+
 </html>

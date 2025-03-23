@@ -5,7 +5,7 @@
 
 html body
 {
-  background-color: #E2FDFF;
+  background-color: #3D4DDE;
   width: 100%;
   height: 100%;
   color: #3D4DDE;
@@ -28,13 +28,18 @@ header
   font-size: larger;
   margin-top: 25px;
 }
-
+#Divisoria
+{
+  padding-top: 100px;
+}
 /*Conteudo Central*/
 #Conteudo
 {
-  padding-top: 100px;
+  border-radius: 20px;
   width: 100%;
   height: 100%;
+  background-color: #E2FDFF;
+
 }
 
 #Testes
@@ -47,13 +52,13 @@ header
 {
   padding: 10px;
   border-radius: 10px;
-  background-color: #6a7dfb70;
+  box-shadow: 1px 1px 3px 1px #3D4DDE;
 }
 #ComandosPost
 {
   padding: 10px;
   border-radius: 10px;
-  background-color: #6a7dfb70;
+  box-shadow: 1px 1px 2px 1px #3D4DDE;
 }
 
 #InputComandos
@@ -65,7 +70,25 @@ header
   color:#E2FDFF;
   border: #3D4DDE;
 }
-#InputComandos::placeholder
+#InputComandosPost
+{
+  background-color: #3D4DDE;
+  padding: 10px;
+  min-width: 80%;
+  border-radius: 10px;
+  color:#E2FDFF;
+  border: #3D4DDE;
+}
+#InputComandosGet
+{
+  background-color: #3D4DDE;
+  padding: 10px;
+  min-width: 80%;
+  border-radius: 10px;
+  color:#E2FDFF;
+  border: #3D4DDE;
+}
+input::placeholder
 {
   color: #E2FDFF;
   text-align: center;
@@ -73,18 +96,32 @@ header
 
 .botaoEnviarGet
 {
-  border-radius: 10px;
+  border-radius: 5px;
   padding: 10px;
   background-color: #6A7DFB;
   color: #E2FDFF;
+  border: none;
+  transition: background-color 0.5s ease-in-out, color 0.5s ease-in-out;
 }
+.botaoEnviarGet:hover
+{
+  background-color: #E2FDFF;
+  color: #3D4DDE;
+} 
 .botaoEnviarPost
 {
-  border-radius: 10px;
+  border-radius: 5px;
   padding: 10px;
   background-color: #6A7DFB;
   color: #E2FDFF;
+  border: none;
+  transition: background-color 0.5s ease-in-out, color 0.5s ease-in-out;
 }
+.botaoEnviarPost:hover
+{
+  background-color: #E2FDFF;
+  color: #3D4DDE;
+} 
 
 #CodigoRetornado
 {
@@ -95,9 +132,10 @@ header
   padding: 10px;
   border-radius: 10px;
   background-color: rgba(0, 0, 0, 0.199);
-  max-width: 100%;
+  width: 100%;
   height: 400px;
-  overflow-y: scroll;
+  overflow-y:scroll;
+
 }
 #CodigoRetornado::-webkit-scrollbar
 {
@@ -110,7 +148,11 @@ header
   background-color: #E2FDFF;
   border-radius: 3px;
 }
-
+#RetornoApi
+{
+  max-width: 100%;
+  white-space: normal;
+}
 
 /*Conteudo Footer*/
 footer

@@ -20,6 +20,8 @@ app.UseAuthorization();
 
 app.MapStaticAssets();
 
+app.MapControllers();
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Principal}/{action=Index}")
@@ -29,6 +31,7 @@ app.MapControllerRoute(
     name: "Pagina2",
     pattern: "/teste/pagina2",
     defaults: new { controller = "Pagina2", action = "Pagina2" });
+    
 
 
 app.Run();
