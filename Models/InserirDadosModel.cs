@@ -6,88 +6,22 @@ using Microsoft.Data.SqlClient;
 
 namespace ProjetoApiMVC.Models;
 
-public class ApiGetModel
-{
+ public class InserirDadosModel
+ {
     public string Nome { get; set; }
     public string Email { get; set; }
     public string Senha { get; set; }
-    public string NomeEmpresa { get; set; }
-    public string CNPJ { get; set; }
-    public string CPF { get; set; }
+    public string? NomeEmpresa { get; set; }
+    public string? CNPJ { get; set; }
+    public string? CPF { get; set; }
     public bool AutorizadoVenda { get; set; }
-    //----------------------------------------------------------------------Buscar Usuarios Post------------------------------------------------------------------------------------
-    public static List<ApiGetModel> BuscarUsuarios()
+
+//----------------------------------------------------------------------------------Inserir Usuarios POST------------------------------------------------------------------------
+    public static InserirDadosModel InserirUsuario(string Nome, string Email, string Senha, string NomeEmpresa, string CNPJ, string CPF, bool AutorizadoVenda)
     {
 
-        List<ApiGetModel> usuarios = new List<ApiGetModel>();
-
-        string connectionString = "Server=DESKTOP-USPO0UO\\SQLEXPRESS;Database=RentShopVT;User Id=admin;Password=1234567890;Trusted_Connection=True;TrustServerCertificate=True;";
-
-        using (SqlConnection conn = new SqlConnection(connectionString))
-        {
-
-            conn.Open();
-            string sql = "SELECT Nome, Email, Senha, CPF FROM Usuarios";
-            using (SqlCommand cmd = new SqlCommand(sql, conn))
-            {
-                using (SqlDataReader reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        usuarios.Add(new ApiGetModel
-                        {
-                            Nome = reader.GetString(0),
-                            Email = reader.GetString(1),
-                            Senha = reader.GetString(2),
-                            CPF = reader.GetString(3)
-                        });
-                    }
-                }
-            }
-        }
-        return usuarios;
-    }
-
-    //-------------------------------------------------------------------------------Buscar Usuários GET-----------------------------------------------------------------------------
-    public static List<ApiGetModel> BuscarUsuariosGet()
-    {
-
-        List<ApiGetModel> usuarios = new List<ApiGetModel>();
-
-        string connectionString = "Server=DESKTOP-USPO0UO\\SQLEXPRESS;Database=RentShopVT;User Id=admin;Password=1234567890;Trusted_Connection=True;TrustServerCertificate=True;";
-
-        using (SqlConnection conn = new SqlConnection(connectionString))
-        {
-
-            conn.Open();
-            string sql = "SELECT Nome, Email, Senha, CPF FROM Usuarios";
-            using (SqlCommand cmd = new SqlCommand(sql, conn))
-            {
-                using (SqlDataReader reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        usuarios.Add(new ApiGetModel
-                        {
-                            Nome = reader.GetString(0),
-                            Email = reader.GetString(1),
-                            Senha = reader.GetString(2),
-                            CPF = reader.GetString(3)
-                        });
-                    }
-                }
-            }
-        }
-        return usuarios;
-    }
-
-    //----------------------------------------------------------------------------------Inserir Usuarios POST------------------------------------------------------------------------
-
-    public static ApiGetModel InserirUsuario(string Nome, string Email, string Senha, string NomeEmpresa, string CNPJ, string CPF, bool AutorizadoVenda)
-    {
-
-        // String de conexão com o banco de dados
-        string connectionString = "Server=DESKTOP-USPO0UO\\SQLEXPRESS;Database=RentShopVT;User Id=admin;Password=1234567890;Trusted_Connection=True;TrustServerCertificate=True;";
+    // String de conexão com o banco de dados
+    string connectionString = "Server=DESKTOP-USPO0UO\\SQLEXPRESS;Database=RentShopVT;User Id=admin;Password=1234567890;Trusted_Connection=True;TrustServerCertificate=True;";
 
     if (!string.IsNullOrEmpty(CNPJ))
     {
@@ -127,7 +61,7 @@ public class ApiGetModel
 
     // Query de inserção segura usando parâmetros
     string sql = @"INSERT INTO Usuarios (Nome, Email, Senha, NomeEmpresa, CNPJ, CPF, AutorizadoVenda) 
-                   VALUES (@Nome, @Email, @Senha, @NomeEmpresa, @CNPJ, @CPF, @AutorizadoVenda)";
+                VALUES (@Nome, @Email, @Senha, @NomeEmpresa, @CNPJ, @CPF, @AutorizadoVenda)";
 
     try
     {
@@ -158,7 +92,6 @@ public class ApiGetModel
                 else
                     cmd.Parameters.AddWithValue("@CPF", CPF);
 
-                // Verifica se o campo AutorizadoVenda não é nulo
                 cmd.Parameters.AddWithValue("@AutorizadoVenda", AutorizadoVenda);
 
                 // Executa o comando e verifica se alguma linha foi afetada
@@ -166,7 +99,7 @@ public class ApiGetModel
                 if (linhasAfetadas > 0)
                 {
                     // Retorna os dados inseridos
-                    return new ApiGetModel
+                    return new InserirDadosModel
                     {
                         Nome = Nome,
                         Email = Email,
@@ -189,5 +122,4 @@ public class ApiGetModel
     // Retorna null em caso de erro
     return null;
 }
-}
-
+ }

@@ -1,5 +1,20 @@
 var builder = WebApplication.CreateBuilder(args);
 
+
+builder.WebHost.ConfigureKestrel(serverOptions =>
+{
+    serverOptions.Listen(System.Net.IPAddress.Any, 5098);
+
+});
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("PermitirTudo",
+        policy => policy.AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader());
+});
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
@@ -12,8 +27,8 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+app.UseCors("PermitirTudo");
 
-app.UseHttpsRedirection();
 app.UseRouting();
 
 app.UseAuthorization();
