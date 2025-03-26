@@ -1,9 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
 using ProjetoApiMVC.Models;
-using ProjetoApiMVC.Controllers;
-using Microsoft.Data.SqlClient;
 
 namespace ProjetoApiMVC.Controllers;
 public class VerificaDuplicidadeController : Controller
