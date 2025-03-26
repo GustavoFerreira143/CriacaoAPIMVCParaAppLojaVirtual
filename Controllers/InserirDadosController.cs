@@ -59,6 +59,7 @@ namespace ProjetoApiMVC.Controllers;
                     request.NomeEmpresa,
                     request.CNPJ,
                     request.CPF,
+                    request.Contato,
                     request.AutorizadoVenda
                 );
 
@@ -81,6 +82,7 @@ public class ConsultaRequest
     public string NomeEmpresa { get; set; }
     public string CNPJ { get; set; }
     public string CPF { get; set; }
+    public string Contato { get; set; }
     public bool AutorizadoVenda { get; set; }
 }
 

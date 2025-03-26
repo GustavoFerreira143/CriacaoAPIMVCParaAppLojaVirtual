@@ -14,10 +14,11 @@ namespace ProjetoApiMVC.Models;
     public string? NomeEmpresa { get; set; }
     public string? CNPJ { get; set; }
     public string? CPF { get; set; }
+    public string? Contato { get; set; }
     public bool AutorizadoVenda { get; set; }
 
 //----------------------------------------------------------------------------------Inserir Usuarios POST------------------------------------------------------------------------
-    public static InserirDadosModel InserirUsuario(string Nome, string Email, string Senha, string NomeEmpresa, string CNPJ, string CPF, bool AutorizadoVenda)
+    public static InserirDadosModel InserirUsuario(string Nome, string Email, string Senha, string NomeEmpresa, string CNPJ, string CPF,string Contato, bool AutorizadoVenda)
     {
 
     // String de conexão com o banco de dados
@@ -60,8 +61,8 @@ namespace ProjetoApiMVC.Models;
     }
 
     // Query de inserção segura usando parâmetros
-    string sql = @"INSERT INTO Usuarios (Nome, Email, Senha, NomeEmpresa, CNPJ, CPF, AutorizadoVenda) 
-                VALUES (@Nome, @Email, @Senha, @NomeEmpresa, @CNPJ, @CPF, @AutorizadoVenda)";
+    string sql = @"INSERT INTO Usuarios (Nome, Email, Senha, NomeEmpresa, CNPJ, CPF, Contato, AutorizadoVenda) 
+                VALUES (@Nome, @Email, @Senha, @NomeEmpresa, @CNPJ, @CPF, @Contato, @AutorizadoVenda)";
 
     try
     {
@@ -74,7 +75,7 @@ namespace ProjetoApiMVC.Models;
                 cmd.Parameters.AddWithValue("@Nome", Nome);
                 cmd.Parameters.AddWithValue("@Email", Email);
                 cmd.Parameters.AddWithValue("@Senha", Senha); 
-
+                cmd.Parameters.AddWithValue("@Contato",Contato);
                 // Verificação de valores nulos ou vazios para os campos opcionais
                 if (string.IsNullOrEmpty(NomeEmpresa))
                     cmd.Parameters.AddWithValue("@NomeEmpresa", DBNull.Value);
@@ -103,6 +104,7 @@ namespace ProjetoApiMVC.Models;
                     {
                         Nome = Nome,
                         Email = Email,
+                        Contato = Contato,
                         Senha = "Senha protegida", // Evita expor a senha no retorno
                         NomeEmpresa = NomeEmpresa,
                         CNPJ = CNPJ,

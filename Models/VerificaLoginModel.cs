@@ -11,6 +11,7 @@ public class VerificaLoginModel
     public long  id { get; set; }
     public string Nome { get; set; }
     public string Email { get; set; }
+    public string Contato { get; set; }    
     public string Senha { get; set; }
     public string? NomeEmpresa { get; set; }
     public string? CNPJ { get; set; }
@@ -31,7 +32,7 @@ public List<VerificaLoginModel> LoginUsuario(string Email, string Senha)
         {
             conn.Open();
 
-            string query = "SELECT id, Nome, Email, NomeEmpresa, CNPJ, CPF, AutorizadoVenda, FotoPerfil FROM Usuarios WHERE Email = @Email AND Senha = @Senha;";
+            string query = "SELECT id, Nome, Email, NomeEmpresa, CNPJ, CPF, AutorizadoVenda, FotoPerfil, Contato FROM Usuarios WHERE Email = @Email AND Senha = @Senha;";
 
             using (SqlCommand cmd = new SqlCommand(query, conn))
             {
@@ -52,6 +53,7 @@ public List<VerificaLoginModel> LoginUsuario(string Email, string Senha)
                             CPF = reader.IsDBNull(5) ? null : reader.GetString(5),
                             AutorizadoVenda = reader.GetBoolean(6),
                             FotoPerfil = reader.IsDBNull(7) ? "personcircle.svg" : reader.GetString(7),
+                            Contato = reader.IsDBNull(8) ? "Nenhum Telefone Cadastrado" : reader.GetString(8)
                         });
                     }
                 }
