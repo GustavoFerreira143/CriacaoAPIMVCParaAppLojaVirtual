@@ -1,4 +1,5 @@
 using Microsoft.Data.SqlClient;
+using dotenv.net;
 
 namespace ProjetoApiMVC.Models;
 
@@ -17,8 +18,9 @@ public class ApiModel
     {
 
         List<ApiModel> usuarios = new List<ApiModel>();
-
-        string connectionString = "Server=DESKTOP-USPO0UO\\SQLEXPRESS;Database=RentShopVT;User Id=admin;Password=1234567890;Trusted_Connection=True;TrustServerCertificate=True;";
+        DotEnv.Load();
+        var dicionario = DotEnv.Read();
+        string connectionString = dicionario["CONNECTION_STRING"];
 
         using (SqlConnection conn = new SqlConnection(connectionString))
         {
@@ -55,8 +57,10 @@ public class ApiModel
 
         List<ApiModel> usuarios = new List<ApiModel>();
 
-        string connectionString = "Server=DESKTOP-USPO0UO\\SQLEXPRESS;Database=RentShopVT;User Id=admin;Password=1234567890;Trusted_Connection=True;TrustServerCertificate=True;";
-
+        DotEnv.Load();
+        var dicionario = DotEnv.Read();
+        string connectionString = dicionario["CONNECTION_STRING"];
+        
         using (SqlConnection conn = new SqlConnection(connectionString))
         {
             conn.Open();

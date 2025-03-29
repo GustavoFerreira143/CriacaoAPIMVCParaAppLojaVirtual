@@ -5,18 +5,18 @@ using System.Security.Claims;
 
 namespace ProjetoApiMVC.Controllers;
 
-public class UploadImagemPerfilController : Controller
+public class TrocaSenhaController : Controller
 {
     private readonly UploadDeImagemPerfilModel _uploadImagemModel;
 
-    public UploadImagemPerfilController()
+    public TrocaSenhaController()
     {
         _uploadImagemModel = new UploadDeImagemPerfilModel();
     }
 
     [Authorize]
-    [HttpPost("/api/uploadimagemperfil")]
-   public async Task<IActionResult> UploadImagem([FromForm] IFormFile imagem)
+    [HttpPost("/api/trocasenha")]
+   public async Task<IActionResult> TrocaSenha([FromForm] IFormFile imagem)
     {
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (!long.TryParse(userId, out long Id))

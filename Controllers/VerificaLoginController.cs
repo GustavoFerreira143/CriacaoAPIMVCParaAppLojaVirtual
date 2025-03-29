@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using ProjetoApiMVC.Models;
 
-
 namespace ProjetoApiMVC.Controllers;
  public class VerificaLoginController : Controller
  {

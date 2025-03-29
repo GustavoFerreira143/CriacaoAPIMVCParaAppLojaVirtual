@@ -1,17 +1,20 @@
 using Microsoft.Data.SqlClient;
+using dotenv.net;
 
 namespace ProjetoApiMVC.Models;
 
 public class VerificaDuplicidadeModel
 {
 
-    private readonly string connectionString = "Server=DESKTOP-USPO0UO\\SQLEXPRESS;Database=RentShopVT;User Id=admin;Password=1234567890;Trusted_Connection=True;TrustServerCertificate=True;";
 
 //----------------------------------------------- Método para verificar se há duplicidade de um valor em uma coluna específica------------------------------------------------------
     public bool VerificarDuplicidade(string coluna, string valor)
     {
         try
         {
+            DotEnv.Load();
+            var dicionario = DotEnv.Read();
+            string connectionString = dicionario["CONNECTION_STRING"];
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 conn.Open(); 

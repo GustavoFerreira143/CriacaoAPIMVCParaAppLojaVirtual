@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProjetoApiMVC.Models;
+using System.Security.Claims;
 
 namespace ProjetoApiMVC.Controllers;
 public class SalvaRedesSociaisController : Controller
@@ -10,18 +12,22 @@ public class SalvaRedesSociaisController : Controller
     {
 
     }
+    [Authorize]
     [HttpPost("/api/salvaredes")]
     public IActionResult SalvarRedesSociais([FromBody] RedesSociaisRequest redesSociais)
     {
-        Console.WriteLine(redesSociais.RedesSociais);
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (!long.TryParse(userId, out long Id))
+            {
+                 return Unauthorized("Erro ao salvar as redes sociais.");
+            }
         if (redesSociais == null || redesSociais.RedesSociais == null)
         {
             return BadRequest("Dados inválidos.");
         }
 
-        
         SalvaRedesSociaisNoBanco redes = new SalvaRedesSociaisNoBanco();
-        bool resultado = redes.SalvarRedes(redesSociais.Id, redesSociais.RedesSociais);
+        bool resultado = redes.SalvarRedes(Id, redesSociais.RedesSociais);
 
         if (resultado)
         {
@@ -36,6 +42,5 @@ public class SalvaRedesSociaisController : Controller
 }
 public class RedesSociaisRequest
 {
-    public long Id { get; set; }
     public Dictionary<string, List<string>> RedesSociais { get; set; }
 }

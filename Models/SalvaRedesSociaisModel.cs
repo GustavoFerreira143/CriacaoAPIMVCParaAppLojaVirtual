@@ -1,9 +1,9 @@
 using Microsoft.Data.SqlClient;
+using dotenv.net;
 
 namespace ProjetoApiMVC.Models;
   public class SalvaRedesSociaisNoBanco 
     {
-        private readonly string connectionString = "Server=DESKTOP-USPO0UO\\SQLEXPRESS;Database=RentShopVT;User Id=admin;Password=1234567890;Trusted_Connection=True;TrustServerCertificate=True;";
         public SalvaRedesSociaisNoBanco()
         {
             
@@ -12,6 +12,10 @@ namespace ProjetoApiMVC.Models;
         {
             try
             {
+                DotEnv.Load();
+                var dicionario = DotEnv.Read();
+                string connectionString = dicionario["CONNECTION_STRING"];
+
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();

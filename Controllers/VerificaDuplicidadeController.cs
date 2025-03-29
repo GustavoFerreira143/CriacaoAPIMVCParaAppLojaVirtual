@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using ProjetoApiMVC.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ProjetoApiMVC.Controllers;
 public class VerificaDuplicidadeController : Controller

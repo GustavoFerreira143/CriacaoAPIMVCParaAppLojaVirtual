@@ -1,53 +1,113 @@
 using Microsoft.Data.SqlClient;
+using Microsoft.IdentityModel.Tokens;
+using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
+using dotenv.net;
 
-namespace ProjetoApiMVC.Models;
-
-public class VerificaLoginModel
+namespace ProjetoApiMVC.Models
 {
-    public long  id { get; set; }
-    public string Nome { get; set; }
-    public string Email { get; set; }
-    public string Contato { get; set; }    
-    public string Senha { get; set; }
-    public string? NomeEmpresa { get; set; }
-    public string? CNPJ { get; set; }
-    public string? CPF { get; set; }
-    public bool AutorizadoVenda { get; set; }
-    public string? FotoPerfil { get; set; }
-    public Dictionary<string, List<string>>? RedesSociais { get; set; }
+    public class VerificaLoginModel
+    {
+        public long id { get; set; }
+        public string Nome { get; set; }
+        public string Email { get; set; }
+        public string Contato { get; set; }
+        public string Senha { get; set; }
+        public string? NomeEmpresa { get; set; }
+        public string? CNPJ { get; set; }
+        public string? CPF { get; set; }
+        public bool AutorizadoVenda { get; set; }
+        public string? FotoPerfil { get; set; }
+        public string Token { get; set; }
+        public Dictionary<string, List<string>>? RedesSociais { get; set; }
 
-    private readonly string connectionString = "Server=DESKTOP-USPO0UO\\SQLEXPRESS;Database=RentShopVT;User Id=admin;Password=1234567890;Trusted_Connection=True;TrustServerCertificate=True;";
 
-//---------------------------------------------------------------------------Validação de Login de Usuário--------------------------------------------------------------------------
+        public VerificaLoginModel()
+        {
+        }
 
-public VerificaLoginModel LoginUsuario(string Email, string Senha)
-{
-    VerificaLoginModel usuario = null; // Armazena um único usuário
+        public string GenerateJwtToken(long userId)
+        {
+            DotEnv.Load();
+            var dicionario = DotEnv.Read();
+            string hashcode = dicionario["Meu_Hash"];
+            var key = Encoding.ASCII.GetBytes("hashcode");
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new[] 
+                {
+                    new Claim(ClaimTypes.NameIdentifier, userId.ToString()), 
+                    new Claim(ClaimTypes.Role, "User")
+                }),
+                Expires = null, 
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
+            };
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+
+            return tokenHandler.WriteToken(token);
+        }
+
+        private bool VerificarSenha(string senhaInformada, string senhaHashArmazenada)
+        {
+            using (var sha256 = SHA256.Create())
+            {
+                byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(senhaInformada));
+
+                StringBuilder sb = new StringBuilder();
+                foreach (byte b in hashBytes)
+                {
+                    sb.Append(b.ToString("x2"));
+                }
+
+                return sb.ToString() == senhaHashArmazenada;
+            }
+        }
+
+        public VerificaLoginModel LoginUsuario(string Email, string Senha)
+        {
+            VerificaLoginModel usuario = null; 
 
     try
     {
+        DotEnv.Load();
+        var dicionario = DotEnv.Read();
+        string connectionString = dicionario["CONNECTION_STRING"];
+
         using (SqlConnection conn = new SqlConnection(connectionString))
         {
             conn.Open();
 
+
             string query = @"SELECT 
                                 u.id, u.Nome, u.Email, u.NomeEmpresa, u.CNPJ, u.CPF, 
-                                u.AutorizadoVenda, u.FotoPerfil, u.Contato, 
+                                u.AutorizadoVenda, u.FotoPerfil, u.Contato, u.Senha, 
                                 r.NomeRede, r.LinkRede, r.PerfilUserRede, r.IconeRede 
-                             FROM Usuarios AS u 
-                             LEFT JOIN RedesSociais AS r ON u.id = r.Usuario 
-                             WHERE u.Email = @Email AND u.Senha = @Senha;";
+                                    FROM Usuarios AS u 
+                                    LEFT JOIN RedesSociais AS r ON u.id = r.Usuario 
+                                    WHERE u.Email = @Email;";
 
             using (SqlCommand cmd = new SqlCommand(query, conn))
             {
                 cmd.Parameters.AddWithValue("@Email", Email);
-                cmd.Parameters.AddWithValue("@Senha", Senha);
 
                 using (SqlDataReader reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())
                     {
+                        string senhaHashArmazenada = reader.GetString(9); 
+                        
+                        if (!VerificarSenha(Senha, senhaHashArmazenada))
+                        {
+                            throw new UnauthorizedAccessException("Senha incorreta.");
+                        }
 
+                        string token = GenerateJwtToken(reader.GetInt64(0));
                         if (usuario == null)
                         {
                             usuario = new VerificaLoginModel
@@ -61,17 +121,17 @@ public VerificaLoginModel LoginUsuario(string Email, string Senha)
                                 AutorizadoVenda = reader.GetBoolean(6),
                                 FotoPerfil = reader.IsDBNull(7) ? "personcircle.svg" : reader.GetString(7),
                                 Contato = reader.IsDBNull(8) ? "Nenhum Telefone Cadastrado" : reader.GetString(8),
+                                Token = token,
                                 RedesSociais = new Dictionary<string, List<string>>()
                             };
                         }
 
-                        if (!reader.IsDBNull(9)) 
+                        if (!reader.IsDBNull(10)) 
                         {
-                            string nomeRede = reader.GetString(9);
-                            string iconeRede = reader.IsDBNull(12) ? "" : reader.GetString(12);
-                            string linkRede = reader.IsDBNull(10) ? "" : reader.GetString(10);
-                            string perfilUser = reader.IsDBNull(11) ? "" : reader.GetString(11);
-
+                            string nomeRede = reader.GetString(10);
+                            string iconeRede = reader.IsDBNull(13) ? "" : reader.GetString(13);
+                            string linkRede = reader.IsDBNull(11) ? "" : reader.GetString(11);
+                            string perfilUser = reader.IsDBNull(12) ? "" : reader.GetString(12);
 
                             if (!usuario.RedesSociais.ContainsKey(nomeRede))
                             {
@@ -93,6 +153,7 @@ public VerificaLoginModel LoginUsuario(string Email, string Senha)
         throw new InvalidOperationException(mensagemErro);
     }
 
-    return usuario; 
-}
+            return usuario;
+        }
+    }
 }

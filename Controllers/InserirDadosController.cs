@@ -21,29 +21,24 @@ namespace ProjetoApiMVC.Controllers;
                     return BadRequest(new { Message = "Os campos Nome, Email e Senha são obrigatórios." });
                 }
 
-                // Verificação de NomeEmpresa, CNPJ e CPF
                 bool isEmpresa = !string.IsNullOrWhiteSpace(request.NomeEmpresa) && !string.IsNullOrWhiteSpace(request.CNPJ);
                 bool isPessoaFisica = !string.IsNullOrWhiteSpace(request.CPF);
 
-                // Caso NomeEmpresa seja informado, CPF não pode ser
                 if (isEmpresa && isPessoaFisica)
                 {
                     return BadRequest(new { Message = "Se NomeEmpresa for informado, CPF não pode ser preenchido." });
                 }
 
-                // Caso NomeEmpresa e CNPJ não tenham valores, CPF deve ter valor
                 if (!isEmpresa && !isPessoaFisica && string.IsNullOrWhiteSpace(request.CPF))
                 {
                     return BadRequest(new { Message = "Se NomeEmpresa e CNPJ não forem informados, o CPF deve ser informado." });
                 }
 
-                // Caso NomeEmpresa e CNPJ estejam preenchidos, CPF não pode ser
                 if (isEmpresa && isPessoaFisica)
                 {
                     return BadRequest(new { Message = "Não é possível informar NomeEmpresa e CNPJ com CPF ao mesmo tempo." });
                 }
 
-                // Caso NomeEmpresa ou CNPJ estejam preenchidos sem o outro, é erro
                 if ((isEmpresa && string.IsNullOrWhiteSpace(request.CNPJ)) || 
                     (string.IsNullOrWhiteSpace(request.NomeEmpresa) && !string.IsNullOrWhiteSpace(request.CNPJ)))
                 {
@@ -84,9 +79,3 @@ public class ConsultaRequest
     public string Contato { get; set; }
     public bool AutorizadoVenda { get; set; }
 }
-
-
-
-
-
-

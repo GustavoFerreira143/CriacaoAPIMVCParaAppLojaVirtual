@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.Data.SqlClient;
+using dotenv.net;
 
 namespace ProjetoApiMVC.Models;
 public class UploadDeImagemPerfilModel
@@ -11,8 +12,9 @@ public class UploadDeImagemPerfilModel
     public UploadDeImagemPerfilModel()
     {
         _uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
-        _connectionString = "Server=DESKTOP-USPO0UO\\SQLEXPRESS;Database=RentShopVT;User Id=admin;Password=1234567890;Trusted_Connection=True;TrustServerCertificate=True;";
-
+        DotEnv.Load();
+        var dicionario = DotEnv.Read();
+        _connectionString = dicionario["CONNECTION_STRING"];
 
         if (!Directory.Exists(_uploadPath))
         {
