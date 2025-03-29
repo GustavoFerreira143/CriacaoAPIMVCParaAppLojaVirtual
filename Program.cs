@@ -3,6 +3,11 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using ProjetoApiMVC;
+using dotenv.net;
+
+DotEnv.Load();
+var dicionario = DotEnv.Read();
+string hashcode = dicionario["Meu_Hash"];
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,7 +34,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuerSigningKey = true,
-             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("12345678900987654321234567890123")),
+             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(hashcode)),
             ValidateIssuer = false,
             ValidateAudience = false,
             ClockSkew = TimeSpan.Zero

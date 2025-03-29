@@ -34,7 +34,7 @@ namespace ProjetoApiMVC.Models
             DotEnv.Load();
             var dicionario = DotEnv.Read();
             string hashcode = dicionario["Meu_Hash"];
-            var key = Encoding.ASCII.GetBytes("hashcode");
+            var key = Encoding.ASCII.GetBytes(hashcode);
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
@@ -100,6 +100,7 @@ namespace ProjetoApiMVC.Models
                 {
                     while (reader.Read())
                     {
+                  
                         string senhaHashArmazenada = reader.GetString(9); 
                         
                         if (!VerificarSenha(Senha, senhaHashArmazenada))
@@ -108,6 +109,7 @@ namespace ProjetoApiMVC.Models
                         }
 
                         string token = GenerateJwtToken(reader.GetInt64(0));
+
                         if (usuario == null)
                         {
                             usuario = new VerificaLoginModel
@@ -125,7 +127,7 @@ namespace ProjetoApiMVC.Models
                                 RedesSociais = new Dictionary<string, List<string>>()
                             };
                         }
-
+                        
                         if (!reader.IsDBNull(10)) 
                         {
                             string nomeRede = reader.GetString(10);
