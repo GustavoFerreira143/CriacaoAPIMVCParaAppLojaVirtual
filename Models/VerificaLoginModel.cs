@@ -14,13 +14,15 @@ public class VerificaLoginModel
     public string? CPF { get; set; }
     public bool AutorizadoVenda { get; set; }
     public string? FotoPerfil { get; set; }
+    public Dictionary<string, List<string>>? RedesSociais { get; set; }
+
     private readonly string connectionString = "Server=DESKTOP-USPO0UO\\SQLEXPRESS;Database=RentShopVT;User Id=admin;Password=1234567890;Trusted_Connection=True;TrustServerCertificate=True;";
 
 //---------------------------------------------------------------------------Validação de Login de Usuário--------------------------------------------------------------------------
 
-public List<VerificaLoginModel> LoginUsuario(string Email, string Senha)
+public VerificaLoginModel LoginUsuario(string Email, string Senha)
 {
-    List<VerificaLoginModel> usuarios = new List<VerificaLoginModel>();
+    VerificaLoginModel usuario = null; // Armazena um único usuário
 
     try
     {
@@ -28,7 +30,13 @@ public List<VerificaLoginModel> LoginUsuario(string Email, string Senha)
         {
             conn.Open();
 
-            string query = "SELECT id, Nome, Email, NomeEmpresa, CNPJ, CPF, AutorizadoVenda, FotoPerfil, Contato FROM Usuarios WHERE Email = @Email AND Senha = @Senha;";
+            string query = @"SELECT 
+                                u.id, u.Nome, u.Email, u.NomeEmpresa, u.CNPJ, u.CPF, 
+                                u.AutorizadoVenda, u.FotoPerfil, u.Contato, 
+                                r.NomeRede, r.LinkRede, r.PerfilUserRede, r.IconeRede 
+                             FROM Usuarios AS u 
+                             LEFT JOIN RedesSociais AS r ON u.id = r.Usuario 
+                             WHERE u.Email = @Email AND u.Senha = @Senha;";
 
             using (SqlCommand cmd = new SqlCommand(query, conn))
             {
@@ -39,18 +47,41 @@ public List<VerificaLoginModel> LoginUsuario(string Email, string Senha)
                 {
                     while (reader.Read())
                     {
-                        usuarios.Add(new VerificaLoginModel
+
+                        if (usuario == null)
                         {
-                            id = reader.GetInt64(0),
-                            Nome = reader.GetString(1),
-                            Email = reader.GetString(2),
-                            NomeEmpresa = reader.IsDBNull(3) ? null : reader.GetString(3),
-                            CNPJ = reader.IsDBNull(4) ? null : reader.GetString(4),
-                            CPF = reader.IsDBNull(5) ? null : reader.GetString(5),
-                            AutorizadoVenda = reader.GetBoolean(6),
-                            FotoPerfil = reader.IsDBNull(7) ? "personcircle.svg" : reader.GetString(7),
-                            Contato = reader.IsDBNull(8) ? "Nenhum Telefone Cadastrado" : reader.GetString(8)
-                        });
+                            usuario = new VerificaLoginModel
+                            {
+                                id = reader.GetInt64(0),
+                                Nome = reader.GetString(1),
+                                Email = reader.GetString(2),
+                                NomeEmpresa = reader.IsDBNull(3) ? null : reader.GetString(3),
+                                CNPJ = reader.IsDBNull(4) ? null : reader.GetString(4),
+                                CPF = reader.IsDBNull(5) ? null : reader.GetString(5),
+                                AutorizadoVenda = reader.GetBoolean(6),
+                                FotoPerfil = reader.IsDBNull(7) ? "personcircle.svg" : reader.GetString(7),
+                                Contato = reader.IsDBNull(8) ? "Nenhum Telefone Cadastrado" : reader.GetString(8),
+                                RedesSociais = new Dictionary<string, List<string>>()
+                            };
+                        }
+
+                        if (!reader.IsDBNull(9)) 
+                        {
+                            string nomeRede = reader.GetString(9);
+                            string iconeRede = reader.IsDBNull(12) ? "" : reader.GetString(12);
+                            string linkRede = reader.IsDBNull(10) ? "" : reader.GetString(10);
+                            string perfilUser = reader.IsDBNull(11) ? "" : reader.GetString(11);
+
+
+                            if (!usuario.RedesSociais.ContainsKey(nomeRede))
+                            {
+                                usuario.RedesSociais[nomeRede] = new List<string>();
+                            }
+
+                            usuario.RedesSociais[nomeRede].Add(iconeRede);   
+                            usuario.RedesSociais[nomeRede].Add(linkRede);    
+                            usuario.RedesSociais[nomeRede].Add(perfilUser);  
+                        }
                     }
                 }
             }
@@ -62,7 +93,6 @@ public List<VerificaLoginModel> LoginUsuario(string Email, string Senha)
         throw new InvalidOperationException(mensagemErro);
     }
 
-    // Retorna null se a lista estiver vazia
-    return usuarios.Count > 0 ? usuarios : null;
+    return usuario; 
 }
 }

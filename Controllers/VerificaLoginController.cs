@@ -22,7 +22,7 @@ namespace ProjetoApiMVC.Controllers;
                 return BadRequest(new { Message = "Os parâmetros 'Email' e 'Senha' são obrigatórios." });
             }
 
-            List<VerificaLoginModel> ValoresDoUsuario = _apiValoresSimplesModel.LoginUsuario(request.Email, request.Senha);
+            VerificaLoginModel ValoresDoUsuario = _apiValoresSimplesModel.LoginUsuario(request.Email, request.Senha);
 
             if (ValoresDoUsuario != null)
             {
