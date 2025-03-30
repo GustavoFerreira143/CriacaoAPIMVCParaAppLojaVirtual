@@ -35,7 +35,7 @@ public class VerificaDuplicidadeModel
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Erro ao acessar o banco de dados: {ex.Message}");
+
             return false;
         }
     }

@@ -25,13 +25,14 @@ namespace ProjetoApiMVC.Models;
                     {
                         cmdDelete.Parameters.AddWithValue("@Id", id);
                         cmdDelete.ExecuteNonQuery(); 
-                        Console.WriteLine("Sucesso ao apagar redes sociais anteriores.");
+        
                     }
 
 
                     if (redessociais == null || redessociais.Count == 0)
                     {
-                        Console.WriteLine("Nenhuma nova rede social para salvar.");
+                      
+                      
                         return true;
                     }
 
@@ -44,7 +45,7 @@ namespace ProjetoApiMVC.Models;
 
                         if (valores.Count < 3)
                         {
-                            Console.WriteLine($"Erro: A rede {nomeRede} não contém valores suficientes.");
+                          
                             continue;
                         }
 
@@ -64,7 +65,7 @@ namespace ProjetoApiMVC.Models;
                         }
                     }
 
-                    Console.WriteLine("Redes sociais salvas com sucesso.");
+                  
                     return true;
                 }
             }

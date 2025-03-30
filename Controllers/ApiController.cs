@@ -18,7 +18,7 @@ public class ApiController : ControllerBase
         }
         catch (Exception ex)
         {
-            Console.WriteLine("Erro" + ex.Message);
+           
             return BadRequest(ex.Message);
         }
     }
@@ -34,7 +34,6 @@ public class ApiController : ControllerBase
         }
         catch (Exception ex)
         {
-            Console.WriteLine("Erro" + ex.Message);
             return BadRequest(ex.Message);
         }
     }

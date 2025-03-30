@@ -43,7 +43,7 @@ namespace ProjetoApiMVC.Models
                     new Claim(ClaimTypes.NameIdentifier, userId.ToString()), 
                     new Claim(ClaimTypes.Role, "User")
                 }),
-                Expires = null, 
+                Expires = DateTime.UtcNow.AddYears(10), 
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
             };
 
@@ -114,7 +114,6 @@ namespace ProjetoApiMVC.Models
                         {
                             usuario = new VerificaLoginModel
                             {
-                                id = reader.GetInt64(0),
                                 Nome = reader.GetString(1),
                                 Email = reader.GetString(2),
                                 NomeEmpresa = reader.IsDBNull(3) ? null : reader.GetString(3),

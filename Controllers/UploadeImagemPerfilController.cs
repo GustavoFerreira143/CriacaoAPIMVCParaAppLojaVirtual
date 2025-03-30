@@ -26,7 +26,7 @@ public class UploadImagemPerfilController : Controller
         if (imagem == null || imagem.Length == 0)
             return BadRequest("Nenhuma imagem foi enviada.");
 
-
+        
         Retorno resposta = await _uploadImagemModel.ProcessarEEnviarImagemAsync(imagem, Id);
 
         if (resposta.Status == "Sucesso")

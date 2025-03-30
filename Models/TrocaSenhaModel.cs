@@ -61,12 +61,12 @@ public class TrocaSenhaModel
             }
             catch (SqlException ex)
             {
-                Console.WriteLine("Erro ao conectar ao banco de dados: " + ex.Message);
+                
                 return false;
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Erro ao trocar a senha: " + ex.Message);
+                
                 return false;
             }
         }
