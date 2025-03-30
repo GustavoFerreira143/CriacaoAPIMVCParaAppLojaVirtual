@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ProjetoApiMVC.Models;
 using Microsoft.AspNetCore.Authorization;
+using dotenv.net;
 
 namespace ProjetoApiMVC.Controllers;
 public class VerificaDuplicidadeController : Controller
@@ -18,13 +19,21 @@ public class VerificaDuplicidadeController : Controller
     {
         try
         {
+            DotEnv.Load();
+            var dicionario = DotEnv.Read();
+            string MeuHashSecreto = dicionario["MeuTokenVerificaDuplicidade"];
+
+            if(MeuHashSecreto != request.MeuHashSecreto)
+            {
+                 return BadRequest(new { Message = "Chave de Acesso Incorreta Detectada" });
+            }
+
             if (string.IsNullOrWhiteSpace(request.Coluna) || string.IsNullOrWhiteSpace(request.Valor))
             {
                 return BadRequest(new { Message = "Os parâmetros 'coluna' e 'valor' são obrigatórios." });
             }
 
             bool existeDuplicidade = _apiValoresSimplesModel.VerificarDuplicidade(request.Coluna, request.Valor);
-
             if (existeDuplicidade)
             {
                 return Ok(new { Message = "Duplicidade encontrada." });
@@ -47,6 +56,7 @@ public class DuplicidadeRequest
 {
     public string Coluna { get; set; }
     public string Valor { get; set; }
+    public string MeuHashSecreto { get; set; }
 }
 
 }

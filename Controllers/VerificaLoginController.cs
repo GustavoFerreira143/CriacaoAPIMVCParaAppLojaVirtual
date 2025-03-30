@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using ProjetoApiMVC.Models;
+using dotenv.net;
 
 namespace ProjetoApiMVC.Controllers;
  public class VerificaLoginController : Controller
@@ -16,6 +17,15 @@ namespace ProjetoApiMVC.Controllers;
     {
         try
         {
+            DotEnv.Load();
+            var dicionario = DotEnv.Read();
+            string MeuHashSecreto = dicionario["MeuTokenLoginUser"];
+
+            if(MeuHashSecreto != request.MeuHashSecreto)
+            {
+                 return BadRequest(new { Message = "Chave de Acesso Incorreta Detectada" });
+            }
+
             if (string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Senha))
             {
                 return BadRequest(new { Message = "Os parâmetros 'Email' e 'Senha' são obrigatórios." });
@@ -42,6 +52,7 @@ public class VerificaLogin
 {
     public string Email { get; set; }
     public string Senha { get; set; }
+    public string MeuHashSecreto { get; set; }
 }
 
  
