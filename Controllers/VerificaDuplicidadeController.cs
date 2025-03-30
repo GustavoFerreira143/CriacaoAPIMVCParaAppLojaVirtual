@@ -41,7 +41,8 @@ public class VerificaDuplicidadeController : Controller
     }
 
 
-// Classe auxiliar para receber os parâmetros do JSON no corpo da requisição
+// Classe auxiliar para receber os parâmetros do JSON no corpo da requisição 
+
 public class DuplicidadeRequest
 {
     public string Coluna { get; set; }
