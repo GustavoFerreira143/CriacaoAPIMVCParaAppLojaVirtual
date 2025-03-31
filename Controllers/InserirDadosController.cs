@@ -24,7 +24,8 @@ namespace ProjetoApiMVC.Controllers;
                 if (request == null ||
                     string.IsNullOrWhiteSpace(request.Nome) ||
                     string.IsNullOrWhiteSpace(request.Email) ||
-                    string.IsNullOrWhiteSpace(request.Senha))
+                    string.IsNullOrWhiteSpace(request.Senha)
+                    || string.IsNullOrWhiteSpace(request.Contato))
                 {
                     return BadRequest(new { Message = "Os campos Nome, Email e Senha são obrigatórios." });
                 }
